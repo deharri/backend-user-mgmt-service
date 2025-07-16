@@ -1,9 +1,9 @@
 package com.deharri.ums.auth.mapper;
 
-import com.deharri.ums.auth.dto.AuthResponseDto;
-import com.deharri.ums.auth.dto.LoginRequestDto;
-import com.deharri.ums.auth.dto.RegisterRequestDto;
-import com.deharri.ums.config.security.jwt.RefreshToken;
+import com.deharri.ums.auth.dto.response.AuthResponseDto;
+import com.deharri.ums.auth.dto.request.LoginRequestDto;
+import com.deharri.ums.auth.dto.request.RegisterRequestDto;
+import com.deharri.ums.config.security.jwt.refresh.RefreshToken;
 import com.deharri.ums.user.entity.CoreUser;
 import org.mapstruct.*;
 
@@ -11,7 +11,6 @@ import org.mapstruct.*;
         componentModel = "spring",
         uses = AuthMapperHelper.class
 )
-@DecoratedWith(AuthMapperDecorator.class)
 public interface AuthMapper {
 
     @Mapping(source = "userRole", target = "userData.userRole")

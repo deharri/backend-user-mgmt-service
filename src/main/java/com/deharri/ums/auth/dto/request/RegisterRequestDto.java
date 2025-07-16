@@ -1,4 +1,4 @@
-package com.deharri.ums.auth.dto;
+package com.deharri.ums.auth.dto.request;
 
 import com.deharri.ums.annotations.ValidateClass;
 import com.deharri.ums.enums.UserRole;

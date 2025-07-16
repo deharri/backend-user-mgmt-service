@@ -1,13 +1,11 @@
 package com.deharri.ums.config.security.jwt;
 
+import com.deharri.ums.config.security.jwt.refresh.RefreshToken;
+import com.deharri.ums.config.security.jwt.refresh.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +18,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
-
     private final String SECRET_KEY;
 
-    public JwtService(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
+    public JwtService() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             SecretKey secretKey = keyGenerator.generateKey();
@@ -57,23 +52,13 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         long noOfWeeks = rememberMe ? 8 : 1; // 48 hours for remember me, 1 hour otherwise
 
-        String token =  Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7 * noOfWeeks)))
                 .signWith(getSecretKey())
                 .compact();
-
-        refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .token(token)
-                        .username(username)
-                        .expiryDate(extractExpiration(token))
-                        .build()
-        );
-
-        return token;
     }
 
 
@@ -110,7 +95,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 }

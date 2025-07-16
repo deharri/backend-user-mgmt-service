@@ -1,6 +1,7 @@
-package com.deharri.ums.config.security.jwt;
+package com.deharri.ums.config.security.jwt.refresh;
 
 import jakarta.persistence.*;
+import jakarta.validation.Constraint;
 import lombok.*;
 
 import java.util.Date;
@@ -9,6 +10,12 @@ import java.util.Date;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_refresh_token_token", columnNames = "token"),
+                @UniqueConstraint(name = "uk_refresh_token_username", columnNames = "username")
+        }
+)
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +24,7 @@ public class RefreshToken {
     @Column(unique = true, nullable = false)
     private String token;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
