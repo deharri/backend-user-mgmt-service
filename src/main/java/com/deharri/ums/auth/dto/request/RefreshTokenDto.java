@@ -1,4 +1,4 @@
-package com.deharri.ums.auth.dto;
+package com.deharri.ums.auth.dto.request;
 
 import lombok.Getter;
 

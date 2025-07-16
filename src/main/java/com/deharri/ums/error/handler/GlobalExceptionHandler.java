@@ -24,7 +24,9 @@ public class GlobalExceptionHandler {
 
     private static final Map<String, String> CONSTRAINT_MESSAGES = Map.of(
             "uk_core_user_username", "Username already exists",
-            "uk_core_user_phone_number", "Phone number already exists"
+            "uk_core_user_phone_number", "Phone number already exists",
+            "uk_refresh_token_token", "Given Refresh Token already exists",
+            "uk_refresh_token_username", "Refresh Token for given user already exists"
     );
 
     @ExceptionHandler(Exception.class)

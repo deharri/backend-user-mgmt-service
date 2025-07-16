@@ -2,6 +2,8 @@ package com.deharri.ums.auth.mapper;
 
 
 import com.deharri.ums.config.security.jwt.JwtService;
+import com.deharri.ums.config.security.jwt.refresh.RefreshTokenService;
+import com.deharri.ums.user.entity.CoreUser;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Named;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class AuthMapperHelper {
 
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -22,7 +25,9 @@ public class AuthMapperHelper {
 
     @Named("generateRefreshToken")
     public String generateRefreshToken(String username, boolean rememberMe) {
-        return jwtService.generateRefreshToken(username, rememberMe);
+        String tokenString = jwtService.generateRefreshToken(username, rememberMe);
+        refreshTokenService.saveToken(tokenString, username);
+        return tokenString;
     }
 
     @Named(("encodePassword"))

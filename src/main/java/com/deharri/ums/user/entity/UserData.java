@@ -24,6 +24,9 @@ public class UserData {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column(columnDefinition = "TEXT")
+    private String bio; // HTML-aware rich text bio
+
     @PrePersist
     private void prePersist() {
         if (uuid == null) {

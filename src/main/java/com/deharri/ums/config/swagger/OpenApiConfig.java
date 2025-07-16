@@ -15,10 +15,10 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("User Management Service API")
                         .version("v1")
-                        .description("API documentation for the UMS service")
+                        .description("API documentation for the User Management Service")
                         .contact(new Contact()
                                 .name("Ali Haris Chishti")
-                                .email("youremail@example.com")
-                                .url("https://github.com/your-repo")));
+                                .email("harischishti28@outlook.com")
+                                .url("https://github.com/deharri/backend-user-mgmt-service")));
     }
 }

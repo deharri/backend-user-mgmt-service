@@ -1,15 +1,15 @@
 package com.deharri.ums.auth;
 
-import com.deharri.ums.auth.dto.LoginRequestDto;
-import com.deharri.ums.auth.dto.RefreshTokenDto;
-import com.deharri.ums.auth.dto.RegisterRequestDto;
-import com.deharri.ums.auth.dto.AuthResponseDto;
+import com.deharri.ums.auth.dto.request.LoginRequestDto;
+import com.deharri.ums.auth.dto.request.RefreshTokenDto;
+import com.deharri.ums.auth.dto.request.RegisterRequestDto;
+import com.deharri.ums.auth.dto.response.AuthResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.AuthenticationException;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -41,6 +41,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(refreshTokenDto));
     }
 
-
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(
+            @RequestBody RefreshTokenDto refreshTokenDto
+    ) {
+        return ResponseEntity.ok(authService.logout(refreshTokenDto));
+    }
 
 }
