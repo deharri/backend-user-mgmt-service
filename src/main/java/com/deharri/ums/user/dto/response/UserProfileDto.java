@@ -1,4 +1,4 @@
-package com.deharri.ums.user.dto;
+package com.deharri.ums.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

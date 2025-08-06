@@ -4,6 +4,22 @@ spring:
     url: jdbc:postgresql://localhost:5432/deharri-user-mgmt-db
     username: postgres
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    transport:
+      protocol: smtp
+
+
   data:
     jdbc:
       dialect: postgresql
@@ -11,6 +27,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
   port: 8088
+
+logging:
+  level:
+    org.apache.kafka: ERROR

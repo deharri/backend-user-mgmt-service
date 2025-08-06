@@ -6,7 +6,7 @@ import com.deharri.ums.auth.dto.request.RefreshTokenDto;
 import com.deharri.ums.auth.dto.request.RegisterRequestDto;
 import com.deharri.ums.auth.dto.response.AuthResponseDto;
 import com.deharri.ums.auth.mapper.AuthMapper;
-import com.deharri.ums.config.security.jwt.JwtService;
+import com.deharri.ums.config.mail.EmailService;
 import com.deharri.ums.config.security.jwt.refresh.RefreshToken;
 import com.deharri.ums.config.security.jwt.refresh.RefreshTokenService;
 import com.deharri.ums.enums.ExceptionMessage;
@@ -15,11 +15,15 @@ import com.deharri.ums.user.UserRepository;
 import com.deharri.ums.user.entity.CoreUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,12 +32,11 @@ import java.util.Map;
 public class AuthService {
 
     private final UserRepository userRepository;
-
     private final AuthMapper authMapper;
-
     private final RefreshTokenService refreshTokenService;
-
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
 
 
     @ValidateArguments
@@ -41,6 +44,14 @@ public class AuthService {
     public AuthResponseDto register(RegisterRequestDto registerRequestDto) {
         CoreUser coreUser = authMapper.registerRequestDtoToCoreUser(registerRequestDto);
         coreUser = userRepository.save(coreUser);
+//        emailService.sendEmail(
+//                "harischishti28@gmail.com",
+//                "Welcome to Deharri User Management System",
+//                "Dear " + coreUser.getUsername() + ",\n\n" +
+//                        "Thank you for registering with Deharri User Management System. We are excited to have you on board!\n\n" +
+//                        "Best regards,\n" +
+//                        "Deharri Team"
+//        );
         return authMapper.coreUserToAuthResponseDto(coreUser, registerRequestDto.isRememberMe());
     }
 
