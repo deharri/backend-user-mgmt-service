@@ -1,10 +1,13 @@
 package com.deharri.ums.aop;
 
+import com.deharri.ums.kafka.log.LogMessageService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -14,7 +17,10 @@ import java.util.Arrays;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class LoggingAspect {
+
+    private final LogMessageService logMessageService;
 
     @Pointcut(
             "execution(* com.deharri.ums..auth..*(..))" +
@@ -35,6 +41,7 @@ public class LoggingAspect {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         log.info("⬇️ REQUEST [{} {}] - Args: {}", request.getMethod(), request.getRequestURI(), Arrays.toString(joinPoint.getArgs()));
+        logMessageService.sendEndpointLogMessage(request.getRequestURI(), request.getMethod(), LogLevel.INFO);
 
         Object result = joinPoint.proceed();
 

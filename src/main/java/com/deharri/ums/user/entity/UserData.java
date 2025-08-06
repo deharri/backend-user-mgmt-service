@@ -11,11 +11,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(
+        name = "user_data",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_core_user_phone_number", columnNames = "phone_number")
+        }
+)
 public class UserData {
 
     @Id
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID uuid;
+
+    @Column(nullable = false)
+    private String phoneNumber;
 
     private String email;
 
