@@ -29,6 +29,24 @@ import java.util.Arrays;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_URLS = {
+            // Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+
+            // Swagger UI v2
+            "/v2/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+
+            "/",
+             "/api/v1/auth/**",
+    };
+
     private UserDetailsService userDetailsService;
     @Autowired
     public void setUserDetailsService(UserDetailsService userDetailsService) {
@@ -53,7 +71,7 @@ public class SecurityConfig {
                         .csrf(AbstractHttpConfigurer::disable)
                         .cors(Customizer.withDefaults())
                         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("/", "/api/v1/auth/**").permitAll()
+                                .requestMatchers(PUBLIC_URLS).permitAll()
                                 .anyRequest().authenticated())
                         .httpBasic(Customizer.withDefaults())
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

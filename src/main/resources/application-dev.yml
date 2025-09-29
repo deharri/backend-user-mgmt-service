@@ -1,8 +1,8 @@
 spring:
   datasource:
-    password: 123456
+    password: ${DB_PASSWORD:12345678}
     url: jdbc:postgresql://localhost:5432/deharri-user-mgmt-db
-    username: haris
+    username: ${DB_USER:postgres}
 
   mail:
     host: smtp.gmail.com
