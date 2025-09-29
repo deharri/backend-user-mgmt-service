@@ -9,7 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,8 +26,26 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private static final String[] PUBLIC_URLS = {
+            // Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+
+            // Swagger UI v2
+            "/v2/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+
+            "/",
+             "/api/v1/auth/**",
+    };
 
     private UserDetailsService userDetailsService;
     @Autowired
@@ -53,7 +71,7 @@ public class SecurityConfig {
                         .csrf(AbstractHttpConfigurer::disable)
                         .cors(Customizer.withDefaults())
                         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("/", "/api/v1/auth/**").permitAll()
+                                .requestMatchers(PUBLIC_URLS).permitAll()
                                 .anyRequest().authenticated())
                         .httpBasic(Customizer.withDefaults())
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

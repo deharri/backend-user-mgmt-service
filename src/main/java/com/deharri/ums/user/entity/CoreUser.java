@@ -1,6 +1,5 @@
 package com.deharri.ums.user.entity;
 
-import com.deharri.ums.base.BaseFields;
 import com.deharri.ums.base.TimeStampFields;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +11,6 @@ import java.util.UUID;
         name = "core_user",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_core_user_username", columnNames = "username"),
-                @UniqueConstraint(name = "uk_core_user_phone_number", columnNames = "phone_number")
         }
 )
 @Getter @Setter
@@ -32,15 +30,12 @@ public class CoreUser extends TimeStampFields {
     private String password;
 
     @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false)
     private String firstName;
 
     @Column(nullable = false)
     private String lastName;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_data_uuid", referencedColumnName = "uuid")
     private UserData userData;
 

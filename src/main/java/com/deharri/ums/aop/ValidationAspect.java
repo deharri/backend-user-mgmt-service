@@ -1,7 +1,13 @@
 package com.deharri.ums.aop;
 
 import com.deharri.ums.annotations.ValidateClass;
+import com.deharri.ums.enums.ExceptionMessage;
+import com.deharri.ums.error.exception.AuthenticationException;
 import com.deharri.ums.error.exception.FieldsValidationException;
+import com.deharri.ums.permission.PermissionService;
+import com.deharri.ums.user.UserService;
+import com.deharri.ums.user.dto.UserUpdateDto;
+import com.deharri.ums.user.entity.CoreUser;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +30,9 @@ public class ValidationAspect {
 
     private final Validator validator;
 
+    private final UserService userService;
+    private final PermissionService permissionService;
+
     @Before("@annotation(com.deharri.ums.annotations.ValidateArguments)")
     public void validateMethodArguments(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
@@ -43,5 +52,15 @@ public class ValidationAspect {
                 throw new FieldsValidationException(errorMessages);
             }
         }
+    }
+
+    @Before("@annotation(com.deharri.ums.annotations.CheckPassword)")
+    public void validatePassword(JoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        UserUpdateDto updateDto = (UserUpdateDto) args[0];
+        CoreUser currentUser = permissionService.getLoggedInUser();
+        if (!userService.isPasswordCorrect(updateDto.getOldPassword(), currentUser.getPassword()))
+            throw new AuthenticationException(ExceptionMessage.OLD_PASSWORD_NOT_CORRECT);
+        userService.setCurrentUser(currentUser);
     }
 }

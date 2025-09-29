@@ -12,7 +12,9 @@ public enum ExceptionMessage {
     INCORRECT_PASSWORD("Password is Incorrect"),
     REFRESH_TOKEN_NOT_FOUND("Refresh token not found"),
     ACCESS_TOKEN_NOT_FOUND("Refresh token not found"),
-    REFRESH_TOKEN_EXPIRED("Refresh token expired");
+    REFRESH_TOKEN_EXPIRED("Refresh token expired"),
+
+    OLD_PASSWORD_NOT_CORRECT("The provided password is not correct");
 
     private final String text;
 }

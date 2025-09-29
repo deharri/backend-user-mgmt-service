@@ -1,7 +1,10 @@
-package com.deharri.ums.auth.dto;
+package com.deharri.ums.auth.dto.request;
 
 import com.deharri.ums.annotations.ValidateClass;
 import com.deharri.ums.enums.UserRole;
+import com.deharri.ums.validation.annotation.ValidPassword;
+import com.deharri.ums.validation.annotation.ValidPhoneNumber;
+import com.deharri.ums.validation.annotation.ValidUsername;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -18,23 +21,13 @@ import lombok.NoArgsConstructor;
 @ValidateClass
 public class RegisterRequestDto {
 
-    @NotBlank(message = "Phone number is required")
-    @Pattern(
-            regexp = "^\\+?[0-9]{10,15}$",
-            message = "Phone number must be between 10 and 15 digits and may start with '+'"
-    )
+    @ValidPhoneNumber
     private String phoneNumber;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters")
+    @ValidUsername
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-            message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
-    )
+    @ValidPassword
     private String password;
 
     @NotBlank(message = "First name is required")

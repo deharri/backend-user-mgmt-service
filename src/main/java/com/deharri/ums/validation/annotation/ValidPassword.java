@@ -1,0 +1,17 @@
+package com.deharri.ums.validation.annotation;
+
+import com.deharri.ums.validation.validator.PasswordValidator;
+import jakarta.validation.Constraint;
+import org.springframework.messaging.handler.annotation.Payload;
+
+import java.lang.annotation.*;
+
+@Documented
+@Constraint(validatedBy = PasswordValidator.class)
+@Target({ ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidPassword {
+    String message() default "Password must be at least 8 characters long and contain uppercase, lowercase, digit, and special character";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
