@@ -39,3 +39,8 @@ server:
 logging:
   level:
     org.apache.kafka: ERROR
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:8081

@@ -2,6 +2,7 @@ package com.deharri.ums.config.security;
 
 import com.deharri.ums.config.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
 
@@ -93,23 +95,21 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        // Allow all origins, methods, and headers
-//        registry.addMapping("/**")
-//                .allowedOrigins("*")  // Allow all origins
-//                .allowedMethods("*")  // Allow all HTTP methods
-//                .allowedHeaders("*")  // Allow all headers
-//                .allowCredentials(false);  // Credentials should be disabled if using '*'
-//    }
+
+//    @Value("${app.cors.allowed-origins}")
+//    private String[] allowedOrigins;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174")); // Allow frontend origin
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // During development, use patterns for flexibility
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
