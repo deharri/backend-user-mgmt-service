@@ -46,9 +46,6 @@ public class RegisterRequestDto {
     )
     private String lastName;
 
-    @NotNull(message = "Role can not be null")
-    private UserRole userRole;
-
     private boolean rememberMe;
 }
 

@@ -3,6 +3,9 @@ package com.deharri.ums.user.entity;
 import com.deharri.ums.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -31,18 +34,17 @@ public class UserData {
     private String profilePictureUrl;
 
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private List<UserRole> userRoles;
 
     @Column(columnDefinition = "TEXT")
     private String bio; // HTML-aware rich text bio
-
-    private boolean serviceProvider;
 
     @PrePersist
     private void prePersist() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }
-        serviceProvider = false;
+        userRoles = new ArrayList<>();
+        userRoles.add(UserRole.ROLE_CONSUMER);
     }
 }

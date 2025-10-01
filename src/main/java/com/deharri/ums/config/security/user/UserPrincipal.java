@@ -18,7 +18,10 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(coreUser.getUserData().getUserRole().toString().substring(5)));
+        return coreUser.getUserData().getUserRoles().stream()
+                .map(m -> m.toString().substring(5))
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     @Override
