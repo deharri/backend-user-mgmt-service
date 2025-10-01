@@ -36,10 +36,13 @@ public class UserData {
     @Column(columnDefinition = "TEXT")
     private String bio; // HTML-aware rich text bio
 
+    private boolean serviceProvider;
+
     @PrePersist
     private void prePersist() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }
+        serviceProvider = false;
     }
 }

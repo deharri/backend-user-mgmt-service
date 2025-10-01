@@ -39,3 +39,11 @@ server:
 logging:
   level:
     org.apache.kafka: ERROR
+
+# Default CORS configuration (will be overridden by profile-specific config)
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:8081
+      - http://localhost:5173
+      - http://localhost:5174
