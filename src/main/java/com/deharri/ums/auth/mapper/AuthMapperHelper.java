@@ -38,11 +38,4 @@ public class AuthMapperHelper {
         return passwordEncoder.encode(password);
     }
 
-    @Named("defaultUserRoles")
-    public List<UserRole> defaultUserRoles() {
-        List<UserRole> roles = new ArrayList<>();
-        roles.add(UserRole.ROLE_CONSUMER);
-        return roles;
-    }
-
 }
