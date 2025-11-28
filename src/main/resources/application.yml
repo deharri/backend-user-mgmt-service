@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: deharri-user-mgmt-service
+
   profiles:
     active: local
 
@@ -14,3 +17,12 @@ app:
       - http://localhost:8081
       - http://localhost:5173
       - http://localhost:5174
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/

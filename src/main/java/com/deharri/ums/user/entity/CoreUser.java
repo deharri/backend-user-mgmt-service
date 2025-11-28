@@ -3,6 +3,7 @@ package com.deharri.ums.user.entity;
 import com.deharri.ums.base.TimeStampFields;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -20,33 +21,33 @@ import java.util.UUID;
 public class CoreUser extends TimeStampFields {
 
     @Id
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID uuid;
+    @Column(name = "user_id", updatable = false, nullable = false)
+    protected UUID userId;
 
     @Column(nullable = false)
-    private String username;
+    protected String username;
 
     @Column(nullable = false)
-    private String password;
+    protected String password;
 
     @Column(nullable = false)
-    private String firstName;
+    protected String firstName;
 
     @Column(nullable = false)
-    private String lastName;
+    protected String lastName;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_data_uuid", referencedColumnName = "uuid")
-    private UserData userData;
+    @JoinColumn(name = "user_data_id", referencedColumnName = "data_id")
+    protected UserData userData;
 
     public String getFullName() {
         return firstName + " " + lastName;
     }
 
     @PrePersist
-    private void prePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
+    protected void prePersist() {
+        if (userId == null) {
+            userId = UUID.randomUUID();
         }
     }
 }

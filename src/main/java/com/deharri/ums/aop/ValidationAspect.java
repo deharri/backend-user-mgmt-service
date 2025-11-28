@@ -61,6 +61,5 @@ public class ValidationAspect {
         CoreUser currentUser = permissionService.getLoggedInUser();
         if (!userService.isPasswordCorrect(updateDto.getOldPassword(), currentUser.getPassword()))
             throw new AuthenticationException(ExceptionMessage.OLD_PASSWORD_NOT_CORRECT);
-        userService.setCurrentUser(currentUser);
     }
 }

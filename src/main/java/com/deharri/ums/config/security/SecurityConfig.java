@@ -34,7 +34,7 @@ public class SecurityConfig {
     private static final String[] PUBLIC_URLS = {
             // Swagger UI v3 (OpenAPI)
             "/v3/api-docs/**",
-            "/swagger-ui/**",
+            "/swagger-ui/**",      // Added leading slash
             "/swagger-ui.html",
 
             // Swagger UI v2
@@ -46,7 +46,9 @@ public class SecurityConfig {
             "/webjars/**",
 
             "/",
-             "/api/v1/auth/**",
+            "/api/v1/auth/**",
+            "/api/v1/users",
+            "/public/**"           // Changed from **/public/** to /public/**
     };
 
     private UserDetailsService userDetailsService;

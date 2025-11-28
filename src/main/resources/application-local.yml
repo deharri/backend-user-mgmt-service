@@ -29,12 +29,13 @@ spring:
       ddl-auto: create-drop
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
-  port: 8080
+  port: 8081
+  forward-headers-strategy: framework  # Important for proxied requests
 
 logging:
   level:
@@ -44,3 +45,23 @@ app:
   cors:
     allowed-origins:
       - http://localhost:8081
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /ums/v3/api-docs/swagger-config
+    url: /ums/v3/api-docs
+
+
+jwt:
+  secret: hMbhMVBaYZDAM4pNeTZ0uNt4M9e/Zv5io+tqukPce9Q=
+
+aws:
+  accessKeyId: AKIA3Z2SS7HTNR6E5OMQ
+  secretKey: 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
+  region: us-east-1
+  s3:
+    bucket: deharri-bucket
+

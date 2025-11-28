@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<CoreUser, UUID> {
 
     Optional<CoreUser> findByUsername(String username);
 
-    @Query("SELECT u.uuid FROM CoreUser u WHERE u.username = ?1")
+    @Query("SELECT u.userId FROM CoreUser u WHERE u.username = ?1")
     Optional<UUID> getUuidByUsername(String username);
 }

@@ -1,39 +1,29 @@
 package com.deharri.ums.config.security.jwt;
 
-import com.deharri.ums.config.security.jwt.refresh.RefreshToken;
-import com.deharri.ums.config.security.jwt.refresh.RefreshTokenRepository;
+import com.deharri.ums.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY;
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
-    public JwtService() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey secretKey = keyGenerator.generateKey();
-            SECRET_KEY = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(String username, List<UserRole> roles) {
 
 
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
 
         String token =  Jwts.builder()
                 .setClaims(claims)
