@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: deharri-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-deharri-user-mgmt-db}
+      POSTGRES_USER: ${DB_USERNAME:-haris}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-123456}
+      TZ: Asia/Karachi
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - deharri-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deharri-ums-app
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-deharri-user-mgmt-db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-haris}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-123456}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${SHOW_SQL:-false}
+      TZ: Asia/Karachi
+      JAVA_OPTS: >-
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=75.0
+        -Duser.timezone=Asia/Karachi
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - app_uploads:/app/uploads
+      - app_logs:/app/logs
+    networks:
+      - deharri-network
+
+volumes:
+  postgres_data:
+  app_uploads:
+  app_logs:
+
+networks:
+  deharri-network:
+    driver: bridge

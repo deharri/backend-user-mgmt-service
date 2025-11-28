@@ -1,6 +1,7 @@
 package com.deharri.ums.error.handler;
 
 import com.deharri.ums.error.exception.AuthenticationException;
+import com.deharri.ums.error.exception.AuthorizationException;
 import com.deharri.ums.error.exception.FieldsValidationException;
 import com.deharri.ums.error.response.BaseResponse;
 import com.deharri.ums.error.response.DataIntegrityViolationExceptionResponse;
@@ -72,6 +73,24 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         log.warn("Authentication error: {}", e.getMessage());
+        return ResponseEntity
+                .status(UNAUTHORIZED)
+                .body(
+                        new BaseResponse(
+                                UNAUTHORIZED,
+                                e.getMessage(),
+                                LocalDateTime.now(),
+                                request.getRequestURI()
+                        )
+                );
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    private ResponseEntity<BaseResponse> handleAuthorizationException(
+            AuthorizationException e,
+            HttpServletRequest request
+    ) {
+        log.warn("Authorization error: {}", e.getMessage());
         return ResponseEntity
                 .status(UNAUTHORIZED)
                 .body(

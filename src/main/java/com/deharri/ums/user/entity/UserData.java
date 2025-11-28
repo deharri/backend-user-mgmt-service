@@ -23,26 +23,24 @@ import java.util.UUID;
 public class UserData {
 
     @Id
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID uuid;
+    @Column(name = "data_id", updatable = false, nullable = false)
+    private UUID dataId;
 
     @Column(nullable = false)
     private String phoneNumber;
 
     private String email;
 
-    private String profilePictureUrl;
+    private String profilePicturePath;
 
     @Enumerated(EnumType.STRING)
     private List<UserRole> userRoles;
 
-    @Column(columnDefinition = "TEXT")
-    private String bio; // HTML-aware rich text bio
 
     @PrePersist
     private void prePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
+        if (dataId == null) {
+            dataId = UUID.randomUUID();
         }
         userRoles = new ArrayList<>();
         userRoles.add(UserRole.ROLE_CONSUMER);

@@ -13,7 +13,6 @@ import org.mapstruct.*;
 )
 public interface AuthMapper {
 
-    @Mapping(source = "registerRequestDto", qualifiedByName = "defaultUserRoles", target = "userData.userRoles", ignore = true)
     @Mapping(source = "phoneNumber", target = "userData.phoneNumber")
     @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
     CoreUser registerRequestDtoToCoreUser(RegisterRequestDto registerRequestDto);
