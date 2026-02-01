@@ -15,10 +15,15 @@ public interface AuthMapper {
 
     @Mapping(source = "phoneNumber", target = "userData.phoneNumber")
     @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "userId", ignore = true)
     CoreUser registerRequestDtoToCoreUser(RegisterRequestDto registerRequestDto);
 
+    @Mapping(target = "accessToken", ignore = true)
+    @Mapping(target = "refreshToken", ignore = true)
     AuthResponseDto loginRequestDtoToAuthResponseDto(LoginRequestDto loginRequestDto);
 
+    @Mapping(target = "accessToken", ignore = true)
+    @Mapping(target = "refreshToken", ignore = true)
     AuthResponseDto registerRequestDtoToAuthResponseDto(RegisterRequestDto registerRequestDto);
 
     @Mapping(source = "username", target = "accessToken", qualifiedByName = "generateAccessToken")

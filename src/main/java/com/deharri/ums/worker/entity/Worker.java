@@ -37,6 +37,7 @@ public class Worker extends TimeStampFields {
     @Enumerated(EnumType.STRING)
     private WorkerType workerType;
 
+    @Builder.Default
     private List<String> skills = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")

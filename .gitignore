@@ -7,6 +7,10 @@ src/main/resources/application-dev.yml
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Logs ###
+logs/
+*.log
+
 ### STS ###
 .apt_generated
 .classpath
@@ -34,3 +38,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment and Secrets ###
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+application-secrets.yml
+application-prod.yml
+
+### OS Generated ###
+.DS_Store
+Thumbs.db
+

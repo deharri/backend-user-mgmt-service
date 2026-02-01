@@ -2,7 +2,7 @@ package com.deharri.ums.validation.annotation;
 
 import com.deharri.ums.validation.validator.PhoneNumberValidator;
 import jakarta.validation.Constraint;
-import org.springframework.messaging.handler.annotation.Payload;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
@@ -12,6 +12,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPhoneNumber {
     String message() default "Invalid phone number format";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -146,13 +146,6 @@
             <scope>runtime</scope>
         </dependency>
 
-
-        <!-- Apache Kafka -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
-
         <!-- AWS SDK for S3 -->
         <dependency>
             <groupId>com.amazonaws</groupId>
