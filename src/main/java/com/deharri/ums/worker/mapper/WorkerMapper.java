@@ -16,6 +16,8 @@ public abstract class WorkerMapper {
 
     @Mapping(target = "coreUser", expression = "java(workerMapperHelper.getCoreUser())")
     @Mapping(target = "cnicVerification.cnic", source = "cnic")
+    @Mapping(target = "workerId", ignore = true)
+    @Mapping(target = "availabilityStatus", ignore = true)
     public abstract Worker createWorkerAccountDtoToWorker(CreateWorkerAccountDto createWorkerAccountDto);
 
 }

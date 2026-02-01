@@ -51,8 +51,7 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    config-url: /ums/v3/api-docs/swagger-config
-    url: /ums/v3/api-docs
+
 
 
 jwt:

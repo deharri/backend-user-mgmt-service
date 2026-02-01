@@ -1,54 +1,96 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: deharri-postgres
-    restart: unless-stopped
+    container_name: ums-postgres
     environment:
-      POSTGRES_DB: ${DB_NAME:-deharri-user-mgmt-db}
-      POSTGRES_USER: ${DB_USERNAME:-haris}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-123456}
-      TZ: Asia/Karachi
+      POSTGRES_DB: deharri-user-mgmt-db
+      POSTGRES_USER: haris
+      POSTGRES_PASSWORD: 123456
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - deharri-network
+      - ums-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U haris -d deharri-user-mgmt-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  app:
+  # Apache Kafka (with Zookeeper built-in via KRaft mode)
+  # Uncomment when needed
+  # kafka:
+  #   image: bitnami/kafka:3.6
+  #   container_name: ums-kafka
+  #   environment:
+  #     # KRaft mode settings (no Zookeeper needed)
+  #     - KAFKA_CFG_NODE_ID=0
+  #     - KAFKA_CFG_PROCESS_ROLES=controller,broker
+  #     - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+  #     - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+  #     - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+  #     - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+  #     - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #   ports:
+  #     - "9092:9092"
+  #   networks:
+  #     - ums-network
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server localhost:9092" ]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+
+  # User Management Service Application
+  user-mgmt-service:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: deharri-ums-app
-    restart: unless-stopped
+    container_name: ums-app
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-deharri-user-mgmt-db}
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-haris}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-123456}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${DDL_AUTO:-update}
-      SPRING_JPA_SHOW_SQL: ${SHOW_SQL:-false}
-      TZ: Asia/Karachi
-      JAVA_OPTS: >-
-        -XX:+UseContainerSupport
-        -XX:MaxRAMPercentage=75.0
-        -Duser.timezone=Asia/Karachi
+      # Spring Profile
+      SPRING_PROFILES_ACTIVE: docker
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: deharri-user-mgmt-db
+      DB_USER: haris
+      DB_PASSWORD: 123456
+      # Kafka (uncomment when needed)
+      # KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      # JWT Secret (use a secure secret in production)
+      JWT_SECRET: hMbhMVBaYZDAM4pNeTZ0uNt4M9e/Zv5io+tqukPce9Q=
+      # Mail (optional - set your Gmail credentials)
+      MAIL_USERNAME: ${MAIL_USERNAME:-your-email@gmail.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-your-app-password}
+      # AWS (optional - set your credentials)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: us-east-1
+      # Eureka (disabled for standalone mode)
+      EUREKA_CLIENT_ENABLED: "false"
     ports:
-      - "${APP_PORT:-8080}:8080"
-    volumes:
-      - app_uploads:/app/uploads
-      - app_logs:/app/logs
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      # Uncomment when Kafka is enabled
+      # kafka:
+      #   condition: service_healthy
     networks:
-      - deharri-network
+      - ums-network
+    restart: unless-stopped
+
+networks:
+  ums-network:
+    driver: bridge
 
 volumes:
   postgres_data:
-  app_uploads:
-  app_logs:
-
-networks:
-  deharri-network:
-    driver: bridge
+    driver: local

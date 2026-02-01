@@ -17,13 +17,16 @@ public class CnicVerification {
     @Column(name = "verification_id", updatable = false, nullable = false)
     private long verificationId;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Status verificationStatus = Status.PENDING;
 
     private String cnic;
 
+    @Builder.Default
     private String cnicFrontPath = "";
 
+    @Builder.Default
     private String cnicBackPath = "";
 
     public enum Status {

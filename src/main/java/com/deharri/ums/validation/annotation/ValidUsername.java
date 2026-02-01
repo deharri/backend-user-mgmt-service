@@ -2,7 +2,7 @@ package com.deharri.ums.validation.annotation;
 
 import com.deharri.ums.validation.validator.UsernameValidator;
 import jakarta.validation.Constraint;
-import org.springframework.messaging.handler.annotation.Payload;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
