@@ -6,9 +6,9 @@ services:
     image: postgres:16-alpine
     container_name: ums-postgres
     environment:
-      POSTGRES_DB: deharri-user-mgmt-db
-      POSTGRES_USER: haris
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: ${DB_NAME:-deharri-user-mgmt-db}
+      POSTGRES_USER: ${DB_USER:-haris}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-123456}
     ports:
       - "5432:5432"
     volumes:
@@ -16,7 +16,7 @@ services:
     networks:
       - ums-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U haris -d deharri-user-mgmt-db" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-haris} -d ${DB_NAME:-deharri-user-mgmt-db}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,26 +53,14 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: ums-app
+    env_file:
+      - .env
     environment:
       # Spring Profile
       SPRING_PROFILES_ACTIVE: docker
-      # Database
+      # Database (override from .env if needed)
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: deharri-user-mgmt-db
-      DB_USER: haris
-      DB_PASSWORD: 123456
-      # Kafka (uncomment when needed)
-      # KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      # JWT Secret (use a secure secret in production)
-      JWT_SECRET: hMbhMVBaYZDAM4pNeTZ0uNt4M9e/Zv5io+tqukPce9Q=
-      # Mail (optional - set your Gmail credentials)
-      MAIL_USERNAME: ${MAIL_USERNAME:-your-email@gmail.com}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-your-app-password}
-      # AWS (optional - set your credentials)
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
-      AWS_REGION: us-east-1
       # Eureka (disabled for standalone mode)
       EUREKA_CLIENT_ENABLED: "false"
     ports:
