@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: user-mgmt-service
   datasource:
     url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:deharri-user-mgmt-db}
     username: ${DB_USER:haris}
@@ -32,13 +34,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  # Kafka (uncomment when needed)
-  # kafka:
-  #   producer:
-  #     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
-  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
 server:
   port: 8081
   forward-headers-strategy: framework
@@ -57,12 +52,6 @@ app:
       - http://localhost:5174
       - http://localhost:3000
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-
 jwt:
   secret: ${JWT_SECRET:hMbhMVBaYZDAM4pNeTZ0uNt4M9e/Zv5io+tqukPce9Q=}
 
@@ -73,7 +62,32 @@ aws:
   s3:
     bucket: deharri-bucket
 
-# Disable Eureka client in Docker standalone mode
+# Enable Eureka client in Docker/Dev mode
 eureka:
   client:
-    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://eureka:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - url: /ums/v3/api-docs
+        name: User Management Service API
+    config-url: /ums/v3/api-docs/swagger-config
+    # Add these for gateway support
+    use-root-path: false
+    operations-sorter: method
+    display-request-duration: true
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    # Important: Add X-Forwarded-Prefix handling
+    url-prefix: /ums
+
