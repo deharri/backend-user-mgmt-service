@@ -112,7 +112,7 @@ public class LoggingAspect {
                     duration);
             
             // Log performance warning for slow requests
-            if (duration > 1000) {
+            if (duration > 2000) {
                 log.warn("⚠ SLOW REQUEST | {} {} | Duration: {}ms exceeded threshold",
                         request.getMethod(),
                         request.getRequestURI(),

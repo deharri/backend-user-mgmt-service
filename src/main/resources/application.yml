@@ -1,14 +1,9 @@
 spring:
   application:
-    name: deharri-user-mgmt-service
+    name: user-mgmt-service
 
   profiles:
-    active: local
-
-  datasource:
-    password: ${DB_PASSWORD:123456}
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:deharri-user-mgmt-db}
-    username: ${DB_USER:haris}
+    active: dev
 
 # Default CORS configuration (will be overridden by profile-specific config)
 app:
@@ -26,3 +21,10 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+
+
+logging:
+  level:
+    org:
+      apache:
+        warn

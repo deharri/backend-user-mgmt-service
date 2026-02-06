@@ -2,7 +2,6 @@ package com.deharri.ums.worker.dto.request;
 
 import com.deharri.ums.enums.Language;
 import com.deharri.ums.enums.PakistanCity;
-import com.deharri.ums.worker.entity.Worker;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,17 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateWorkerAccountDto {
+public class UpdateWorkerProfileDto {
 
-    @NotNull(message = "Worker type is required")
-    private Worker.WorkerType workerType;
-
-    @NotEmpty(message = "At least one skill is required")
     private List<@NotBlank(message = "Skill cannot be blank") String> skills;
-
-    @NotBlank(message = "CNIC is required")
-    @Pattern(regexp = "^[0-9]{5}-[0-9]{7}-[0-9]$", message = "CNIC must be in format: 12345-1234567-1")
-    private String cnic;
 
     @Size(max = 5000, message = "Bio cannot exceed 5000 characters")
     private String bio;
@@ -54,8 +45,5 @@ public class CreateWorkerAccountDto {
 
     // Languages
     private List<Language> languages; // Languages spoken
-
-    // Agency (optional)
-    private String agencyId; // UUID of agency if worker belongs to one
 
 }

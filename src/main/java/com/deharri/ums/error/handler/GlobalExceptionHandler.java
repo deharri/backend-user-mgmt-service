@@ -2,6 +2,7 @@ package com.deharri.ums.error.handler;
 
 import com.deharri.ums.error.exception.AuthenticationException;
 import com.deharri.ums.error.exception.AuthorizationException;
+import com.deharri.ums.error.exception.CustomDataIntegrityViolationException;
 import com.deharri.ums.error.exception.FieldsValidationException;
 import com.deharri.ums.error.response.BaseResponse;
 import com.deharri.ums.error.response.DataIntegrityViolationExceptionResponse;
@@ -92,6 +93,26 @@ public class GlobalExceptionHandler {
                         BAD_REQUEST,
                         e.getMessage(),
                         e.getErrors(),
+                        request.getRequestURI()
+                ));
+    }
+
+    /**
+     * Handles custom data validation exceptions.
+     */
+    @ExceptionHandler(CustomDataIntegrityViolationException.class)
+    public ResponseEntity<BaseResponse> handleCustomDataIntegrityViolationException(
+            CustomDataIntegrityViolationException e,
+            HttpServletRequest request
+    ) {
+        log.warn("Validation failed: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .body(new BaseResponse(
+                        BAD_REQUEST,
+                        e.getMessage(),
+                        LocalDateTime.now(),
                         request.getRequestURI()
                 ));
     }
@@ -361,4 +382,5 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()
                 ));
     }
+
 }
