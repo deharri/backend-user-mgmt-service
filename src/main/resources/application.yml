@@ -3,7 +3,7 @@ spring:
     name: user-mgmt-service
 
   profiles:
-    active: local
+    active: dev
 
 # Default CORS configuration (will be overridden by profile-specific config)
 app:
@@ -21,3 +21,10 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+
+
+logging:
+  level:
+    org:
+      apache:
+        warn
