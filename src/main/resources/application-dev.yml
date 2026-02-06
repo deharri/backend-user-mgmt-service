@@ -37,7 +37,7 @@ spring:
     import: secret.properties
 
 server:
-  port: 8081
+  port: 8090
   forward-headers-strategy: framework
 
 logging:
@@ -92,3 +92,5 @@ aws:
   region: ${AWS_REGION:us-east-1}
   s3:
     bucket: deharri-bucket
+
+

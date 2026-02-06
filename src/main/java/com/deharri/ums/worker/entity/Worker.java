@@ -1,11 +1,15 @@
 package com.deharri.ums.worker.entity;
 
+import com.deharri.ums.agency.entity.Agency;
 import com.deharri.ums.base.TimeStampFields;
+import com.deharri.ums.enums.Language;
+import com.deharri.ums.enums.PakistanCity;
 import com.deharri.ums.user.entity.CoreUser;
 import com.deharri.ums.worker.dto.response.WorkerTypeDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +23,7 @@ import java.util.UUID;
 public class Worker extends TimeStampFields {
 
     @Id
-    @Column(updatable = false, nullable = false)
+    @Column(name = "worker_id", updatable = false, nullable = false)
     private UUID workerId;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -43,7 +47,61 @@ public class Worker extends TimeStampFields {
     @Column(columnDefinition = "TEXT")
     private String bio; // HTML-aware rich text bio
 
+    // Experience and Pricing
+    private Integer experienceYears; // Years of experience in the field
 
+    @Column(precision = 10, scale = 2)
+    private BigDecimal hourlyRate; // Hourly rate in PKR
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal dailyRate; // Daily rate in PKR (optional, some workers prefer daily)
+
+    // Location Information
+    @Enumerated(EnumType.STRING)
+    private PakistanCity city; // Primary city of operation
+
+    private String area; // Specific area/locality within the city
+
+    @Builder.Default
+    @ElementCollection(targetClass = PakistanCity.class)
+    @CollectionTable(name = "worker_service_cities", joinColumns = @JoinColumn(name = "worker_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "city")
+    private List<PakistanCity> serviceCities = new ArrayList<>(); // Cities where worker provides services
+
+    // Languages
+    @Builder.Default
+    @ElementCollection(targetClass = Language.class)
+    @CollectionTable(name = "worker_languages", joinColumns = @JoinColumn(name = "worker_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language")
+    private List<Language> languages = new ArrayList<>(); // Languages spoken by the worker
+
+    // Portfolio
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "worker_portfolio", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "image_path")
+    private List<String> portfolioImagePaths = new ArrayList<>(); // S3 paths for portfolio images
+
+    // Agency Relationship (optional)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agency_id", referencedColumnName = "agency_id")
+    private Agency agency; // Worker can optionally belong to an agency
+
+    // Statistics (updated by other services)
+    @Column(precision = 3, scale = 2)
+    private BigDecimal averageRating; // Average rating from reviews (0.00 to 5.00)
+
+    @Builder.Default
+    private Integer totalJobsCompleted = 0; // Total number of jobs completed
+
+    // Verification status helper
+    @Transient
+    public boolean isVerified() {
+        return cnicVerification != null
+                && cnicVerification.getVerificationStatus() == CnicVerification.Status.VERIFIED;
+    }
 
     @PrePersist
     protected void prePersist() {
