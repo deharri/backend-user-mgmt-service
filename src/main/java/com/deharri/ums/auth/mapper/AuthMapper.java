@@ -26,12 +26,12 @@ public interface AuthMapper {
     @Mapping(target = "refreshToken", ignore = true)
     AuthResponseDto registerRequestDtoToAuthResponseDto(RegisterRequestDto registerRequestDto);
 
-    @Mapping(source = "username", target = "accessToken", qualifiedByName = "generateAccessToken")
+    @Mapping(target = "accessToken", expression = "java(authMapperHelper.generateAccessToken(coreUser.getUserId(), coreUser.getUsername()))")
     @Mapping(target = "refreshToken", expression = "java(authMapperHelper.generateRefreshToken(coreUser.getUsername(), rememberMe))")
     AuthResponseDto coreUserToAuthResponseDto(CoreUser coreUser, @Context boolean rememberMe);
 
     @Mapping(source = "token", target = "refreshToken")
-    @Mapping(source = "username", target = "accessToken", qualifiedByName = "generateAccessToken")
+    @Mapping(source = "username", target = "accessToken", qualifiedByName = "generateAccessTokenWithUsername")
     AuthResponseDto refreshTokenToAuthResponseDto(RefreshToken refreshToken);
 
 }
