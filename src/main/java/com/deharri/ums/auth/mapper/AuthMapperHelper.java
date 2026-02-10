@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -24,8 +25,13 @@ public class AuthMapperHelper {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Named("generateAccessToken")
+    public String generateAccessToken(UUID userId, String username) {
+        return jwtService.generateAccessToken(userId, username, userService.getUserRoles(username));
+    }
+
+    @Named("generateAccessTokenWithUsername")
     public String generateAccessToken(String username) {
-        return jwtService.generateAccessToken(username, userService.getUserRoles(username));
+        return jwtService.generateAccessToken(userService.getIdFromUsername(username), username, userService.getUserRoles(username));
     }
 
     @Named("generateRefreshToken")

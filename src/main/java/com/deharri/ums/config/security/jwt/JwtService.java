@@ -21,11 +21,12 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public String generateAccessToken(String username, List<UserRole> roles) {
+    public String generateAccessToken(UUID userId, String username, List<UserRole> roles) {
 
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
+        claims.put("userId", userId);
 
         String token =  Jwts.builder()
                 .setClaims(claims)
