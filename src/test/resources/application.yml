@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  cloud:
+    discovery:
+      enabled: false
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    enabled: false
+
+jwt:
+  secret: dGVzdFNlY3JldEtleUZvclVuaXRUZXN0aW5nUHVycG9zZXNPbmx5MTIzNDU2Nzg5MA==
+
+aws:
+  s3:
+    bucket: test-bucket
+  accessKeyId: test-key
+  secretKey: test-secret
+  region: us-east-1
+
+spring.mail:
+  host: localhost
+  port: 25
+  username: test
+  password: test
+
+server:
+  port: 0

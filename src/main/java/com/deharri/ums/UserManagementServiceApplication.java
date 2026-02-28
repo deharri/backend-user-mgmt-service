@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
-@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableDiscoveryClient
 public class UserManagementServiceApplication {
 
