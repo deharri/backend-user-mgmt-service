@@ -17,6 +17,9 @@ public interface AgencyMemberRepository extends JpaRepository<AgencyMember, UUID
 
     List<AgencyMember> findByAgency(Agency agency);
 
+    /** Ordered for the "members history" view: ACTIVE first (most recent stint), then past. */
+    List<AgencyMember> findByAgencyOrderByMembershipStatusAscJoinedAtDesc(Agency agency);
+
     List<AgencyMember> findByCoreUser(CoreUser coreUser);
 
     boolean existsByAgencyAndCoreUser(Agency agency, CoreUser coreUser);

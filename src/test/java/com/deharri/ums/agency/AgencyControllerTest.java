@@ -1,5 +1,6 @@
 package com.deharri.ums.agency;
 
+import com.deharri.ums.config.security.jwt.JwtService;
 import com.deharri.ums.agency.controller.AgencyController;
 import com.deharri.ums.agency.dto.request.CreateAgencyDto;
 import com.deharri.ums.agency.dto.request.UpdateAgencyDto;
@@ -46,6 +47,12 @@ class AgencyControllerTest {
 
     @MockBean
     private AgencyService agencyService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     // ========================================================================
     // POST /api/v1/agencies/create

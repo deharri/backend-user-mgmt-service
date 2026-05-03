@@ -6,6 +6,7 @@ import com.deharri.ums.agency.dto.request.UpdateAgencyDto;
 import com.deharri.ums.agency.dto.response.AgencyListItemDto;
 import com.deharri.ums.agency.dto.response.AgencyProfileResponseDto;
 import com.deharri.ums.user.dto.response.ResponseMessageDto;
+import com.deharri.ums.worker.dto.response.WorkerListItemDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,4 +59,51 @@ public class AgencyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(agencyService.uploadLicenseDocument(licenseDocument));
     }
 
+    @PostMapping("/workers/{workerId}/invite")
+    public ResponseEntity<ResponseMessageDto> inviteWorker(@PathVariable String workerId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(agencyService.inviteWorkerToAgency(workerId));
+    }
+
+    @GetMapping("/invitations/my")
+    public ResponseEntity<java.util.List<com.deharri.ums.agency.dto.response.WorkerInvitationDto>> getMyInvitations() {
+        return ResponseEntity.ok(agencyService.getMyPendingInvitations());
+    }
+
+    @PutMapping("/invitations/{invitationId}/respond")
+    public ResponseEntity<ResponseMessageDto> respondToInvitation(
+            @PathVariable String invitationId,
+            @RequestParam("accept") boolean accept) {
+        return ResponseEntity.ok(agencyService.respondToInvitation(invitationId, accept));
+    }
+
+    @DeleteMapping("/workers/{workerId}")
+    public ResponseEntity<ResponseMessageDto> removeWorker(@PathVariable String workerId) {
+        return ResponseEntity.ok(agencyService.removeWorkerFromAgency(workerId));
+    }
+
+    @GetMapping("/{agencyId}/workers")
+    public ResponseEntity<List<WorkerListItemDto>> getAgencyWorkers(@PathVariable String agencyId) {
+        return ResponseEntity.ok(agencyService.listAgencyWorkers(agencyId));
+    }
+
+    /** Worker-initiated leave from their current agency. Required to switch agencies or become an owner. */
+    @DeleteMapping("/me/membership")
+    public ResponseEntity<ResponseMessageDto> leaveCurrentAgency() {
+        return ResponseEntity.ok(agencyService.leaveCurrentAgency());
+    }
+
+    /**
+     * Returns the membership history of the calling user's agency — current and past members
+     * with joined/left timestamps and final status. Caller must own an agency.
+     */
+    @GetMapping("/me/members/history")
+    public ResponseEntity<List<com.deharri.ums.agency.dto.response.AgencyMembershipHistoryDto>> getMyMembersHistory() {
+        return ResponseEntity.ok(agencyService.getMyAgencyMembersHistory());
+    }
+
+    /** Returns invitations sent by the calling user's agency — pending, accepted, rejected. */
+    @GetMapping("/me/invitations")
+    public ResponseEntity<List<com.deharri.ums.agency.dto.response.AgencySentInvitationDto>> getMyAgencyInvitations() {
+        return ResponseEntity.ok(agencyService.getMyAgencyInvitations());
+    }
 }

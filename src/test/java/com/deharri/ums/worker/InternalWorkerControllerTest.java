@@ -1,5 +1,6 @@
 package com.deharri.ums.worker;
 
+import com.deharri.ums.config.security.jwt.JwtService;
 import com.deharri.ums.enums.Language;
 import com.deharri.ums.enums.PakistanCity;
 import com.deharri.ums.error.exception.ResourceNotFoundException;
@@ -52,13 +53,22 @@ class InternalWorkerControllerTest {
     @MockBean
     private WorkerRepository workerRepository;
 
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+
     private Worker worker1;
     private Worker worker2;
     private UUID worker1Id;
     private UUID worker2Id;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
+        // By default, findByCoreUser_UserId returns empty so fallback to findById works
+        when(workerRepository.findByCoreUser_UserId(any(UUID.class))).thenReturn(Optional.empty());
         worker1Id = UUID.randomUUID();
         worker2Id = UUID.randomUUID();
 

@@ -40,21 +40,24 @@ public class InternalWorkerController {
     }
 
     @GetMapping("/{workerId}")
-    @Operation(summary = "Get single worker (for single sync)")
+    @Operation(summary = "Get single worker (for single sync, workerId here can be userId)")
     @Transactional(readOnly = true)
     public ResponseEntity<InternalWorkerProfileDto> getWorkerById(@PathVariable UUID workerId) {
-        Worker worker = workerRepository.findById(workerId)
+        Worker worker = workerRepository.findByCoreUser_UserId(workerId)
+                .or(() -> workerRepository.findById(workerId))
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found: " + workerId));
         return ResponseEntity.ok(toInternalDto(worker));
     }
 
     @PutMapping("/{workerId}/stats")
-    @Operation(summary = "Update worker rating and jobs completed stats")
+    @Operation(summary = "Update worker rating and jobs completed stats (workerId here is the user's userId)")
     @Transactional
     public ResponseEntity<Void> updateWorkerStats(
             @PathVariable UUID workerId,
             @RequestBody UpdateWorkerStatsDto statsDto) {
-        Worker worker = workerRepository.findById(workerId)
+        // Job-service stores userId (from JWT) as assignedWorkerId, so look up by userId
+        Worker worker = workerRepository.findByCoreUser_UserId(workerId)
+                .or(() -> workerRepository.findById(workerId))
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found: " + workerId));
 
         if (statsDto.getAverageRating() != null) {

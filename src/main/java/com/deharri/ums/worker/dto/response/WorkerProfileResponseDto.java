@@ -69,6 +69,14 @@ public class WorkerProfileResponseDto {
     private BigDecimal averageRating;
     private Integer totalJobsCompleted;
 
+    // Subscription
+    private boolean subscriptionActive;
+    private LocalDateTime subscriptionExpiresAt;
+
+    // Shop location
+    private Double shopLatitude;
+    private Double shopLongitude;
+
     // Timestamps
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

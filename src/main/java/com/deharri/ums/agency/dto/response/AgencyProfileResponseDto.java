@@ -46,6 +46,11 @@ public class AgencyProfileResponseDto {
     private BigDecimal averageRating;
     private Integer totalJobsCompleted;
 
+    // Subscription
+    private String subscriptionStatus;
+    private LocalDateTime subscriptionExpiresAt;
+    private Boolean subscriptionActive;
+
     // Timestamps
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

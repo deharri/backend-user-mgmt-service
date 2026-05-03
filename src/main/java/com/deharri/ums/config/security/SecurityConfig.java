@@ -48,7 +48,12 @@ public class SecurityConfig {
             "/",
             "/api/v1/auth/**",
             "/api/v1/users",
-            "/public/**"           // Changed from **/public/** to /public/**
+            "/public/**",          // Changed from **/public/** to /public/**
+            "/api/v1/internal/**",           // Service-to-service calls (no JWT needed)
+            "/api/v1/workers/internal/**",   // Service-to-service worker activation
+            "/api/v1/agencies/internal/**", // Service-to-service agency activation
+            "/api/v1/workers/nearby",        // Public nearby worker search
+            "/api/v1/dev/**"                 // Dev-only data wipe endpoint (NOT for production)
     };
 
     private UserDetailsService userDetailsService;

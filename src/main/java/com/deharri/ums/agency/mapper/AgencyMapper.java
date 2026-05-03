@@ -26,6 +26,9 @@ public abstract class AgencyMapper {
     @Mapping(target = "totalWorkers", ignore = true)
     @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "totalJobsCompleted", ignore = true)
+    @Mapping(target = "subscriptionStatus", ignore = true)
+    @Mapping(target = "subscriptionStartedAt", ignore = true)
+    @Mapping(target = "subscriptionExpiresAt", ignore = true)
     public abstract Agency createAgencyDtoToAgency(CreateAgencyDto createAgencyDto);
 
     @Mapping(target = "agencyId", ignore = true)
@@ -36,6 +39,9 @@ public abstract class AgencyMapper {
     @Mapping(target = "totalWorkers", ignore = true)
     @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "totalJobsCompleted", ignore = true)
+    @Mapping(target = "subscriptionStatus", ignore = true)
+    @Mapping(target = "subscriptionStartedAt", ignore = true)
+    @Mapping(target = "subscriptionExpiresAt", ignore = true)
     public abstract void updateAgencyFromDto(UpdateAgencyDto updateDto, @MappingTarget Agency agency);
 
     @Mapping(target = "agencyId", expression = "java(agency.getAgencyId().toString())")
@@ -44,6 +50,9 @@ public abstract class AgencyMapper {
     @Mapping(target = "email", source = "coreUser.userData.email")
     @Mapping(target = "phoneNumber", source = "coreUser.userData.phoneNumber")
     @Mapping(target = "hasLicenseDocument", expression = "java(agency.getLicensePath() != null && !agency.getLicensePath().isBlank())")
+    @Mapping(target = "subscriptionStatus", expression = "java(agency.getSubscriptionStatus() == null ? null : agency.getSubscriptionStatus().name())")
+    @Mapping(target = "subscriptionExpiresAt", source = "subscriptionExpiresAt")
+    @Mapping(target = "subscriptionActive", expression = "java(agency.isSubscriptionActive())")
     public abstract AgencyProfileResponseDto agencyToProfileResponseDto(Agency agency);
 
     @Mapping(target = "agencyId", expression = "java(agency.getAgencyId().toString())")

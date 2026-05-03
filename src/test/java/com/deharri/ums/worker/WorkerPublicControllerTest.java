@@ -1,5 +1,6 @@
 package com.deharri.ums.worker;
 
+import com.deharri.ums.config.security.jwt.JwtService;
 import com.deharri.ums.worker.controller.WorkerPublicController;
 import com.deharri.ums.worker.dto.response.WorkerTypeDto;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,12 @@ class WorkerPublicControllerTest {
 
     @MockBean
     private WorkerService workerService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     // ========================================================================
     // GET /public/api/v1/workers/types/all

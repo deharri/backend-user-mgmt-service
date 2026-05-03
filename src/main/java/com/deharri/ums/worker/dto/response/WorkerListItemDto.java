@@ -17,10 +17,12 @@ import java.math.BigDecimal;
 public class WorkerListItemDto {
 
     private String workerId;
+    private String userId;
 
     // Basic user info
     private String firstName;
     private String lastName;
+    private String username;
     private String profilePictureUrl;
 
     // Worker info
@@ -43,5 +45,12 @@ public class WorkerListItemDto {
 
     // Agency
     private String agencyName; // If belongs to agency
+
+    // Shop location
+    private Double shopLatitude;
+    private Double shopLongitude;
+
+    // Populated only for nearby searches
+    private Double distanceKm;
 
 }

@@ -46,4 +46,13 @@ public class UpdateWorkerProfileDto {
     // Languages
     private List<Language> languages; // Languages spoken
 
+    // Shop location (set via map picker)
+    @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
+    @DecimalMax(value = "90.0", message = "Latitude must be <= 90")
+    private Double shopLatitude;
+
+    @DecimalMin(value = "-180.0", message = "Longitude must be >= -180")
+    @DecimalMax(value = "180.0", message = "Longitude must be <= 180")
+    private Double shopLongitude;
+
 }

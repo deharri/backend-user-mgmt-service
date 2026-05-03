@@ -1,6 +1,7 @@
 package com.deharri.ums.agency.entity;
 
 import com.deharri.ums.base.TimeStampFields;
+import com.deharri.ums.enums.AgencySubscriptionStatus;
 import com.deharri.ums.enums.PakistanCity;
 import com.deharri.ums.user.entity.CoreUser;
 import com.deharri.ums.worker.entity.Worker;
@@ -8,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +66,16 @@ public class Agency extends TimeStampFields {
     @Builder.Default
     private VerificationStatus verificationStatus = VerificationStatus.PENDING;
 
+    // Subscription
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private AgencySubscriptionStatus subscriptionStatus = AgencySubscriptionStatus.INACTIVE;
+
+    private LocalDateTime subscriptionStartedAt;
+
+    private LocalDateTime subscriptionExpiresAt;
+
     // Workers managed by this agency
     @OneToMany(mappedBy = "agency", fetch = FetchType.LAZY)
     @Builder.Default
@@ -84,6 +96,12 @@ public class Agency extends TimeStampFields {
     @Builder.Default
     private Integer totalJobsCompleted = 0; // Total jobs completed by all agency workers
 
+    public boolean isSubscriptionActive() {
+        return subscriptionStatus == AgencySubscriptionStatus.ACTIVE
+                && subscriptionExpiresAt != null
+                && subscriptionExpiresAt.isAfter(LocalDateTime.now());
+    }
+
     @PrePersist
     protected void prePersist() {
         if (agencyId == null) {
@@ -91,6 +109,9 @@ public class Agency extends TimeStampFields {
         }
         if (verificationStatus == null) {
             verificationStatus = VerificationStatus.PENDING;
+        }
+        if (subscriptionStatus == null) {
+            subscriptionStatus = AgencySubscriptionStatus.INACTIVE;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.deharri.ums.worker;
 
+import com.deharri.ums.config.security.jwt.JwtService;
 import com.deharri.ums.enums.Language;
 import com.deharri.ums.enums.PakistanCity;
 import com.deharri.ums.user.dto.response.ResponseMessageDto;
@@ -44,6 +45,12 @@ class WorkerControllerTest {
 
     @MockBean
     private WorkerService workerService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     // ========================================================================
     // POST /api/v1/workers/create

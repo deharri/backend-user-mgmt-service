@@ -6,6 +6,8 @@ import com.deharri.ums.annotations.CheckPassword;
 import com.deharri.ums.annotations.ValidateArguments;
 import com.deharri.ums.enums.UserRole;
 import com.deharri.ums.permission.PermissionService;
+import com.deharri.ums.error.exception.CustomDataIntegrityViolationException;
+import com.deharri.ums.user.dto.request.SendPhoneChangeOtpDto;
 import com.deharri.ums.user.dto.request.UserEmailUpdateDto;
 import com.deharri.ums.user.dto.request.UserPasswordUpdateDto;
 import com.deharri.ums.user.dto.request.UserPhoneNoUpdateDto;
@@ -13,6 +15,8 @@ import com.deharri.ums.user.dto.response.ResponseMessageDto;
 import com.deharri.ums.user.dto.response.UserProfileDto;
 import com.deharri.ums.user.entity.CoreUser;
 import com.deharri.ums.user.mapper.UserMapper;
+import com.deharri.ums.util.PhoneNumberNormalizer;
+import com.deharri.ums.verification.TwilioVerifyService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +39,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final TwilioVerifyService twilioVerifyService;
 
     public UserProfileDto getMyProfile() {
         return userMapper.coreUserToUserProfileDto(permissionService.getLoggedInUser());
@@ -43,8 +48,30 @@ public class UserService {
     @CheckPassword
     @ValidateArguments
     @Transactional
+    public ResponseMessageDto sendPhoneChangeOtp(SendPhoneChangeOtpDto dto) {
+        CoreUser currentUser = permissionService.getLoggedInUser();
+        String newE164 = PhoneNumberNormalizer.normalizeToE164(dto.getNewPhoneNumber());
+        if (newE164.equals(currentUser.getUserData().getPhoneNumber())) {
+            throw new CustomDataIntegrityViolationException("New phone number is the same as current");
+        }
+        if (userRepository.existsByUserDataPhoneNumber(newE164)) {
+            throw new CustomDataIntegrityViolationException("Phone number already registered");
+        }
+        twilioVerifyService.sendOtp(newE164);
+        return new ResponseMessageDto("Verification code sent to " + PhoneNumberNormalizer.mask(newE164));
+    }
+
+    @CheckPassword
+    @ValidateArguments
+    @Transactional
     public ResponseMessageDto updatePhoneNo(UserPhoneNoUpdateDto dto) {
         CoreUser currentUser = permissionService.getLoggedInUser();
+        // SMS OTP verification disabled — uncomment to re-enable Twilio gating
+        // String newE164 = PhoneNumberNormalizer.normalizeToE164(dto.getNewPhoneNumber());
+        // if (!twilioVerifyService.checkOtp(newE164, dto.getOtpCode())) {
+        //     throw new CustomDataIntegrityViolationException("Invalid or expired verification code");
+        // }
+        // currentUser.getUserData().setPhoneNumber(newE164);
         currentUser.getUserData().setPhoneNumber(dto.getNewPhoneNumber());
         userRepository.save(currentUser);
         return new ResponseMessageDto("Phone Number Updated Successfully!");

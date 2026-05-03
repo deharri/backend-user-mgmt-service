@@ -440,4 +440,11 @@ public class UserController {
         log.debug("Fetching profile picture URL for current user");
         return ResponseEntity.ok(userService.getMyProfilePictureUrl());
     }
+
+    @PostMapping("/phone/send-otp")
+    public ResponseEntity<ResponseMessageDto> sendPhoneChangeOtp(
+            @RequestBody com.deharri.ums.user.dto.request.SendPhoneChangeOtpDto dto) {
+        log.info("Sending phone-change OTP");
+        return ResponseEntity.ok(userService.sendPhoneChangeOtp(dto));
+    }
 }

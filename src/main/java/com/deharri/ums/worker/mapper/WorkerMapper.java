@@ -58,8 +58,10 @@ public abstract class WorkerMapper {
     public abstract WorkerProfileResponseDto workerToProfileResponseDto(Worker worker);
 
     @Mapping(target = "workerId", expression = "java(worker.getWorkerId().toString())")
+    @Mapping(target = "userId", expression = "java(worker.getCoreUser().getUserId().toString())")
     @Mapping(target = "firstName", source = "coreUser.firstName")
     @Mapping(target = "lastName", source = "coreUser.lastName")
+    @Mapping(target = "username", source = "coreUser.username")
     @Mapping(target = "profilePictureUrl", expression = "java(workerMapperHelper.getProfilePictureUrl(worker))")
     @Mapping(target = "availabilityStatus", source = "availabilityStatus.availabilityStatus")
     @Mapping(target = "isVerified", expression = "java(worker.isVerified())")

@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +96,20 @@ public class Worker extends TimeStampFields {
 
     @Builder.Default
     private Integer totalJobsCompleted = 0; // Total number of jobs completed
+
+    // Subscription
+    @Column(name = "subscription_active", nullable = false, columnDefinition = "boolean default false not null")
+    private boolean subscriptionActive = false;
+
+    @Column(name = "subscription_expires_at")
+    private LocalDateTime subscriptionExpiresAt;
+
+    // Shop location coordinates
+    @Column(name = "shop_latitude")
+    private Double shopLatitude;
+
+    @Column(name = "shop_longitude")
+    private Double shopLongitude;
 
     // Verification status helper
     @Transient

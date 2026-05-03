@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<CoreUser, UUID> {
 
     @Query("SELECT u.userId FROM CoreUser u WHERE u.username = ?1")
     Optional<UUID> getUuidByUsername(String username);
+
+    boolean existsByUserDataPhoneNumber(String phoneNumber);
 }

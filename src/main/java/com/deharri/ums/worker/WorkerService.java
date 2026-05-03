@@ -8,6 +8,7 @@ import com.deharri.ums.permission.PermissionService;
 import com.deharri.ums.user.dto.response.ResponseMessageDto;
 import com.deharri.ums.user.entity.CoreUser;
 import com.deharri.ums.worker.dto.request.CreateWorkerAccountDto;
+import com.deharri.ums.worker.dto.request.UpdateAvailabilityDto;
 import com.deharri.ums.worker.dto.request.UpdateWorkerProfileDto;
 import com.deharri.ums.worker.dto.response.WorkerListItemDto;
 import com.deharri.ums.worker.dto.response.WorkerProfileResponseDto;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -61,15 +64,25 @@ public class WorkerService {
     }
 
     public List<WorkerListItemDto> getAllWorkers() {
-        return workerRepository.findAll().stream()
+        return workerRepository.findAllBySubscriptionActiveTrue().stream()
                 .map(workerMapper::workerToListItemDto)
                 .collect(Collectors.toList());
+    }
+
+    public WorkerProfileResponseDto getWorkerByUserId(String userId) {
+        UUID id = UUID.fromString(userId);
+        Worker worker = workerRepository.findByCoreUser_UserId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Worker not found for user ID: " + userId));
+        return workerMapper.workerToProfileResponseDto(worker);
     }
 
     public WorkerProfileResponseDto getWorkerById(String workerId) {
         UUID id = UUID.fromString(workerId);
         Worker worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + workerId));
+        if (!worker.isSubscriptionActive()) {
+            throw new AuthorizationException("This worker profile is not available");
+        }
         return workerMapper.workerToProfileResponseDto(worker);
     }
 
@@ -90,6 +103,22 @@ public class WorkerService {
         workerRepository.save(worker);
 
         return new ResponseMessageDto("Worker profile updated successfully");
+    }
+
+    @Transactional
+    public WorkerProfileResponseDto updateAvailability(UpdateAvailabilityDto dto) {
+        var currentUser = permissionService.getLoggedInUser();
+        Worker worker = workerRepository.findByCoreUser(currentUser)
+                .orElseThrow(() -> new AuthorizationException("Worker account not found for current user"));
+
+        var availability = worker.getAvailabilityStatus();
+        availability.setAvailabilityStatus(dto.getStatus());
+        availability.setUnavailableFrom(dto.getUnavailableFrom());
+        availability.setUnavailableUntil(dto.getUnavailableUntil());
+        availability.setUnavailabilityReason(dto.getUnavailabilityReason());
+
+        workerRepository.save(worker);
+        return workerMapper.workerToProfileResponseDto(worker);
     }
 
     @Transactional
@@ -125,5 +154,39 @@ public class WorkerService {
         workerRepository.save(worker);
 
         return new ResponseMessageDto("Portfolio image deleted successfully");
+    }
+
+    public List<WorkerListItemDto> getNearbyWorkers(double lat, double lng, double radiusKm, String workerType) {
+        if (radiusKm > 30) radiusKm = 30;
+        List<Worker> workers = workerRepository.findNearbySubscribedWorkers(lat, lng, radiusKm, workerType);
+        double finalRadius = radiusKm;
+        return workers.stream()
+                .map(w -> {
+                    WorkerListItemDto dto = workerMapper.workerToListItemDto(w);
+                    dto.setDistanceKm(Math.round(calculateDistanceKm(lat, lng,
+                            w.getShopLatitude(), w.getShopLongitude()) * 10.0) / 10.0);
+                    return dto;
+                })
+                .sorted(Comparator.comparingDouble(d -> d.getDistanceKm() != null ? d.getDistanceKm() : Double.MAX_VALUE))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void activateSubscription(UUID userId, LocalDateTime expiresAt) {
+        Worker worker = workerRepository.findByCoreUser_UserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Worker not found for user: " + userId));
+        worker.setSubscriptionActive(true);
+        worker.setSubscriptionExpiresAt(expiresAt);
+        workerRepository.save(worker);
+    }
+
+    private double calculateDistanceKm(double lat1, double lng1, double lat2, double lng2) {
+        final int R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 }

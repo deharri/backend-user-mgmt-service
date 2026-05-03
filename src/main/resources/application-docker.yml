@@ -91,3 +91,5 @@ springdoc:
     # Important: Add X-Forwarded-Prefix handling
     url-prefix: /ums
 
+agency:
+  drop-request-table: ${AGENCY_DROP_REQUEST_TABLE:false}

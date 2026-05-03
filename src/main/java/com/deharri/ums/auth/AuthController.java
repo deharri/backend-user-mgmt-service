@@ -3,8 +3,11 @@ package com.deharri.ums.auth;
 import com.deharri.ums.auth.dto.request.LoginRequestDto;
 import com.deharri.ums.auth.dto.request.RefreshTokenDto;
 import com.deharri.ums.auth.dto.request.RegisterRequestDto;
+import com.deharri.ums.auth.dto.request.SendOtpRequestDto;
 import com.deharri.ums.auth.dto.response.AuthResponseDto;
 import com.deharri.ums.error.response.BaseResponse;
+import com.deharri.ums.user.dto.response.ResponseMessageDto;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -260,5 +263,14 @@ public class AuthController {
     ) {
         log.info("Processing logout request");
         return ResponseEntity.ok(authService.logout(refreshTokenDto));
+    }
+
+    @Operation(summary = "Send registration OTP",
+            description = "Sends a 6-digit verification code via SMS to the phone number provided. Required before /register.")
+    @PostMapping("/send-otp")
+    public ResponseEntity<ResponseMessageDto> sendOtp(
+            @Valid @RequestBody SendOtpRequestDto request) {
+        log.info("Sending registration OTP");
+        return ResponseEntity.ok(authService.sendOtpForRegistration(request));
     }
 }

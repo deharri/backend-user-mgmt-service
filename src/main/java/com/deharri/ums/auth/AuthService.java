@@ -4,6 +4,7 @@ import com.deharri.ums.annotations.ValidateArguments;
 import com.deharri.ums.auth.dto.request.LoginRequestDto;
 import com.deharri.ums.auth.dto.request.RefreshTokenDto;
 import com.deharri.ums.auth.dto.request.RegisterRequestDto;
+import com.deharri.ums.auth.dto.request.SendOtpRequestDto;
 import com.deharri.ums.auth.dto.response.AuthResponseDto;
 import com.deharri.ums.auth.mapper.AuthMapper;
 import com.deharri.ums.config.mail.EmailService;
@@ -11,8 +12,12 @@ import com.deharri.ums.config.security.jwt.refresh.RefreshToken;
 import com.deharri.ums.config.security.jwt.refresh.RefreshTokenService;
 import com.deharri.ums.enums.ExceptionMessage;
 import com.deharri.ums.error.exception.AuthenticationException;
+import com.deharri.ums.error.exception.CustomDataIntegrityViolationException;
 import com.deharri.ums.user.UserRepository;
+import com.deharri.ums.user.dto.response.ResponseMessageDto;
 import com.deharri.ums.user.entity.CoreUser;
+import com.deharri.ums.util.PhoneNumberNormalizer;
+import com.deharri.ums.verification.TwilioVerifyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,12 +41,26 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final TwilioVerifyService twilioVerifyService;
 
-
+    public ResponseMessageDto sendOtpForRegistration(SendOtpRequestDto request) {
+        String e164 = PhoneNumberNormalizer.normalizeToE164(request.getPhoneNumber());
+        if (userRepository.existsByUserDataPhoneNumber(e164)) {
+            throw new CustomDataIntegrityViolationException("Phone number already registered");
+        }
+        twilioVerifyService.sendOtp(e164);
+        return new ResponseMessageDto("Verification code sent to " + PhoneNumberNormalizer.mask(e164));
+    }
 
     @ValidateArguments
     @Transactional
     public AuthResponseDto register(RegisterRequestDto registerRequestDto) {
+        // SMS OTP verification disabled — uncomment to re-enable Twilio gating
+        // String e164 = PhoneNumberNormalizer.normalizeToE164(registerRequestDto.getPhoneNumber());
+        // if (!twilioVerifyService.checkOtp(e164, registerRequestDto.getOtpCode())) {
+        //     throw new CustomDataIntegrityViolationException("Invalid or expired verification code");
+        // }
+        // registerRequestDto.setPhoneNumber(e164);
         CoreUser coreUser = authMapper.registerRequestDtoToCoreUser(registerRequestDto);
         coreUser = userRepository.save(coreUser);
 //        emailService.sendEmail(

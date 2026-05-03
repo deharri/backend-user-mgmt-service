@@ -4,6 +4,8 @@ import com.deharri.ums.annotations.ValidateClass;
 import com.deharri.ums.user.dto.UserUpdateDto;
 import com.deharri.ums.validation.annotation.ValidPhoneNumber;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,4 +34,9 @@ public class UserPhoneNoUpdateDto extends UserUpdateDto {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String newPhoneNumber;
+
+    // SMS OTP verification disabled — field kept for forward compatibility, no validation
+    @Schema(description = "6-digit verification code (currently unused — SMS verification disabled)",
+            example = "123456")
+    private String otpCode;
 }

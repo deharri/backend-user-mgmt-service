@@ -89,4 +89,11 @@ public class RegisterRequestDto {
             defaultValue = "false"
     )
     private boolean rememberMe;
+
+    // SMS OTP verification disabled — field kept for forward compatibility, no validation
+    @Schema(
+            description = "6-digit verification code (currently unused — SMS verification disabled)",
+            example = "123456"
+    )
+    private String otpCode;
 }
