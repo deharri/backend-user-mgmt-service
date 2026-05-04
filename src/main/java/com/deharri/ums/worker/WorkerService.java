@@ -157,7 +157,10 @@ public class WorkerService {
     }
 
     public List<WorkerListItemDto> getNearbyWorkers(double lat, double lng, double radiusKm, String workerType) {
-        if (radiusKm > 30) radiusKm = 30;
+        // Customer-facing nearby search. Cap raised to 200 km so users in
+        // smaller cities still see workers from neighbouring metros.
+        if (radiusKm > 200) radiusKm = 200;
+        if (radiusKm < 1) radiusKm = 1;
         List<Worker> workers = workerRepository.findNearbySubscribedWorkers(lat, lng, radiusKm, workerType);
         double finalRadius = radiusKm;
         return workers.stream()
