@@ -50,6 +50,18 @@ public class CreateWorkerAccountDto {
     @Size(max = 200, message = "Area cannot exceed 200 characters")
     private String area; // Specific area/locality
 
+    // Shop coordinates set by the LocationPickerField at signup. Required by
+    // the mobile signup screen; left optional in the DTO so service-side
+    // workflows that create workers without pinning a location (e.g. agency
+    // adding a member on their behalf) still work.
+    @DecimalMin(value = "-90.0",  message = "Shop latitude must be between -90 and 90")
+    @DecimalMax(value = "90.0",   message = "Shop latitude must be between -90 and 90")
+    private Double shopLatitude;
+
+    @DecimalMin(value = "-180.0", message = "Shop longitude must be between -180 and 180")
+    @DecimalMax(value = "180.0",  message = "Shop longitude must be between -180 and 180")
+    private Double shopLongitude;
+
     private List<PakistanCity> serviceCities; // Cities where worker provides services
 
     // Languages
