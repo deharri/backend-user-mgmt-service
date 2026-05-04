@@ -48,6 +48,16 @@ public class Agency extends TimeStampFields {
 
     private String address; // Physical address of the agency
 
+    // Office coordinates — set at signup via map picker. Required for customer
+    // map/discovery views. BigDecimal because Hibernate maps it cleanly to
+    // numeric(precision, scale) which gives ~1 m resolution on lat (precision 9
+    // / scale 6) and is consistent with how Worker.shop_latitude is stored.
+    @Column(name = "latitude", precision = 9, scale = 6)
+    private java.math.BigDecimal latitude;
+
+    @Column(name = "longitude", precision = 9, scale = 6)
+    private java.math.BigDecimal longitude;
+
     // Service Coverage
     @Builder.Default
     @ElementCollection(targetClass = PakistanCity.class)

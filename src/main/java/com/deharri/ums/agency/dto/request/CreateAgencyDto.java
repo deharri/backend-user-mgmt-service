@@ -37,6 +37,18 @@ public class CreateAgencyDto {
     @Size(max = 500, message = "Address cannot exceed 500 characters")
     private String address;
 
+    // Office coordinates — required at signup so the agency shows up on
+    // customer-facing maps. Set by the LocationPickerField on the frontend.
+    @NotNull(message = "Latitude is required (use the map picker on signup)")
+    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90")
+    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90")
+    private java.math.BigDecimal latitude;
+
+    @NotNull(message = "Longitude is required (use the map picker on signup)")
+    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180")
+    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180")
+    private java.math.BigDecimal longitude;
+
     private List<PakistanCity> serviceCities;
 
     @Size(max = 100, message = "License number cannot exceed 100 characters")

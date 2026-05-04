@@ -33,6 +33,11 @@ public class UpdateAgencyDto {
     @Size(max = 500, message = "Address cannot exceed 500 characters")
     private String address;
 
+    // Office coordinates — optional on update; only sent when the user
+    // re-confirms a new pin via the map picker.
+    private java.math.BigDecimal latitude;
+    private java.math.BigDecimal longitude;
+
     private List<PakistanCity> serviceCities;
 
     @Size(max = 100, message = "License number cannot exceed 100 characters")

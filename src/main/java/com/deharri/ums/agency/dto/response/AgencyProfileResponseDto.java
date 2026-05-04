@@ -34,6 +34,8 @@ public class AgencyProfileResponseDto {
     // Location
     private PakistanCity city;
     private String address;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private List<PakistanCity> serviceCities;
 
     // Verification
